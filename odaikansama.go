@@ -42,7 +42,7 @@ func run(api *slack.Client) int {
 func ChoiceTheme() string {
 	rand.Seed(time.Now().Unix())
 
-	expression := []string{
+	expressions := []string{
 		"泣いている",
 		"怒っている",
 		"笑っている",
@@ -52,25 +52,26 @@ func ChoiceTheme() string {
 		"企んでいる",
 		"焦っている",
 		"照れている"}
+	expression := expressions[rand.Intn(len(expressions))]
 
-	theme := expression[rand.Intn(len(expression))]
+	hairStyles := []string{"長髪", "ポニーテール", "ツインテール", "短髪", "サイドテール", "ぼさぼさ"}
+	hairStyle := hairStyles[rand.Intn(len(hairStyles))]
 
-	hairStyle := []string{"長髪", "ポニーテール", "ツインテール", "短髪", "サイドテール", "ぼさぼさ"}
-	theme = theme + hairStyle[rand.Intn(len(hairStyle))] + "の"
+	clothing_list := []string{"警察官の服", "メイド服／執事服", "ドレス／タキシード", "体操服", "巫女服／神主", "水着", "学生服", "看護士／医者", "私服"}
+	clothing := clothing_list[rand.Intn(len(clothing_list))]
 
-	clothing := []string{"警察官", "メイド服／執事服", "ドレス／タキシード", "体操服", "巫女服／神主", "水着", "学生服", "看護士／医者"}
-	theme = theme + clothing[rand.Intn(len(clothing))] + "を着た"
+	sex_list := []string{"男", "女"}
+	sex := sex_list[rand.Intn(len(sex_list))]
 
-	sex := []string{"男", "女"}
-	theme = theme + sex[rand.Intn(len(sex))] + "を描きましょう。"
+	options := []string{"小動物", "眼鏡", "帽子", "パンスト", "ブーツ", "色黒", "手袋", "眼帯"}
+	option := options[rand.Intn(len(options))]
 
-	option := []string{"小動物", "眼鏡", "帽子", "パンスト", "ブーツ", "色黒", "手袋", "眼帯"}
-	theme = theme + "おまけで" + option[rand.Intn(len(option))] + "もいれてみては。"
+	theme := expression + hairStyle + "の" + clothing + "を着た" + sex + "を描きましょう。おまけで" + option + "もいれてみては。"
 
 	return theme
 }
 
 func main() {
-	api := slack.New("APPKEY")
+	api := slack.New("APIKEY")
 	os.Exit(run(api))
 }
