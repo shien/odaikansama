@@ -2,18 +2,19 @@
 
 ## how to use
 
+Download slack repository.
 ```
 go get -u github.com/nlopes/slack
 ```
 
-```
-go run odaikansama.go
-```
-
-## to binary
-
+Build source.
 ```
 go build -o odaikansama.go
+```
+
+Run slack bot.
+```
+./odaikansama --apikey [apikey]
 ```
 
 ## TODO
