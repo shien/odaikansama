@@ -18,6 +18,7 @@ func Run(apikey string) int {
 	api := slack.New(apikey)
 
 	rtm := api.NewRTM()
+	odai := OdaiCache{}
 	go rtm.ManageConnection()
 
 	for {
@@ -33,7 +34,7 @@ func Run(apikey string) int {
 					theme := ChoiceTheme()
 					rtm.SendMessage(rtm.NewOutgoingMessage(theme, ev.Channel))
 				} else if ev.Text == requestMessageClothing {
-					theme := ChoiceClothing()
+					theme := ChoiceClothing(odai)
 					rtm.SendMessage(rtm.NewOutgoingMessage(theme, ev.Channel))
 				} else if ev.Text == keepAlive {
 					rtm.SendMessage(rtm.NewOutgoingMessage(answerAlive, ev.Channel))
@@ -48,81 +49,18 @@ func Run(apikey string) int {
 	}
 }
 
-func ChoiceClothing() string {
+func ChoiceClothing(odai OdaiCache) string {
 
-	clothing_bottoms := []string{
-		"ミニスカート",
-		"フレアスカート",
-		"ギャザースカート",
-		"プリーツスカート",
-		"ペンシルスカート",
-		"コクーンスカート",
-		"ペンシルスカート",
-		"ペンシルスカート",
-		"プリーツスカート",
-		"タイトスカート",
-		"カプリパンツ",
-		"サルエルパンツ",
-		"スラックス",
-		"スカンツ",
-		"デニム",
-		"リジットデニム",
-		"ベイカーパンツ",
-		"ストレートデニム",
-		"ボーイフレンドデニム",
-		"スキニー",
-		"バギーパンツ",
-		"テーパードパンツ",
-		"パラッツォパンツ",
-		"ジョガーパンツ",
-		"チノ・パン"}
-	clothing_bottom := clothing_bottoms[rand.Intn(len(clothing_bottoms))]
+	clothing_bottoms := odai.GetOdai("服", "ボトムス")
+	clothing_bottom := clothing_bottoms.OdaiList[rand.Intn(len(clothing_bottoms.OdaiList))]
 
-	clothing_tops := []string{
-		"ワイシャツ",
-		"作業着",
-		"法被",
-		"セーラー",
-		"ワンピース",
-		"ニットシャツ",
-		"ブラウス",
-		"ポロシャツ",
-		"デニムシャツ",
-		"ニットシャツ",
-		"Tシャツ",
-		"カットソー",
-		"チュニック",
-		"タンクトップ",
-		"キャミソール",
-		"ベアトップ",
-		"ニット",
-		"ベスト",
-		"カーディガン",
-		"スウェット",
-		"パーカー",
-		"ジャージ"}
-	clothing_top1 := clothing_tops[rand.Intn(len(clothing_tops))]
-	clothing_top2 := clothing_tops[rand.Intn(len(clothing_tops))]
+	clothing_tops := odai.GetOdai("服", "トップス")
 
-	shoebox := []string{
-		"ブーツ",
-		"スニーカー",
-		"サンダル",
-		"パンプス",
-		"ショートブーツ",
-		"ニーハイブーツ",
-		"ハイヒール",
-		"厚底靴",
-		"下駄",
-		"はだし",
-		"草履",
-		"島草履",
-		"雨靴",
-		"ローラースケート",
-		"ローラーブレード",
-		"アイススケート",
-		"足袋"}
-	shoes := shoebox[rand.Intn(len(shoebox))]
+	clothing_top1 := clothing_tops.OdaiList[rand.Intn(len(clothing_tops.OdaiList))]
+	clothing_top2 := clothing_tops.OdaiList[rand.Intn(len(clothing_tops.OdaiList))]
+
+	shoebox := odai.GetOdai("服", "靴")
+	shoes := shoebox.OdaiList[rand.Intn(len(shoebox.OdaiList))]
 
 	option := ChoiceOption()
 
