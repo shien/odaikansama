@@ -75,6 +75,7 @@ func ChoiceOption(odai) string {
 	return options.OdaiList[rand.Intn(len(options.OdaiList))]
 }
 
+/* テーマを選ぶ */
 func ChoiceTheme() string {
 	rand.Seed(time.Now().Unix())
 
