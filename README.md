@@ -9,7 +9,7 @@ go get -u github.com/nlopes/slack
 
 Build source.
 ```
-go build -o odaikansama.go
+go build -o odaikansama
 ```
 
 Run slack bot.
@@ -19,10 +19,8 @@ Run slack bot.
 
 ## TODO
 
-- お題の種類を増やす
- - 服
- - デフォルトの適当なお題
 - 人間以外も指定できるようにする
-- conf にお題が書けるようにする
+- csv にお題が書けるようにする [済]
+- 全てのお題を csv に対応させる
 - 必要そうならテストを書く
 - 時間で毎日一題出せるようにする
