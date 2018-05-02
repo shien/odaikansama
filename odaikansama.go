@@ -12,7 +12,7 @@ func main() {
 	}
 
 	if os.Args[1] == "--apikey" {
-
+		// start odaikan bot
 		if len(os.Args[2]) > 0 {
 			apikey := os.Args[2]
 			Run(apikey)
