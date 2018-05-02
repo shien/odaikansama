@@ -70,17 +70,9 @@ func ChoiceClothing(odai OdaiCache) string {
 
 }
 
-func ChoiceOption() string {
-	options := []string{
-		"小動物",
-		"鞄",
-		"眼鏡",
-		"帽子",
-		"パンスト",
-		"色黒",
-		"手袋",
-		"眼帯"}
-	return options[rand.Intn(len(options))]
+func ChoiceOption(odai) string {
+	options := odai.GetOdai("テーマ", "オプション")
+	return options.OdaiList[rand.Intn(len(options.OdaiList))]
 }
 
 func ChoiceTheme() string {
