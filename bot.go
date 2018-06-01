@@ -31,7 +31,7 @@ func Run(apikey string) int {
 			case *slack.MessageEvent:
 				log.Printf("Message: %v\n", ev)
 				if ev.Text == requestMessage {
-					theme := ChoiceTheme()
+					theme := ChoiceTheme(odai)
 					rtm.SendMessage(rtm.NewOutgoingMessage(theme, ev.Channel))
 				} else if ev.Text == requestMessageClothing {
 					theme := ChoiceClothing(odai)
@@ -70,29 +70,20 @@ func ChoiceClothing(odai OdaiCache) string {
 
 }
 
-func ChoiceOption(odai) string {
+func ChoiceOption(odai OdaiCache) string {
 	options := odai.GetOdai("テーマ", "オプション")
 	return options.OdaiList[rand.Intn(len(options.OdaiList))]
 }
 
 /* テーマを選ぶ */
-func ChoiceTheme() string {
+func ChoiceTheme(odai OdaiCache) string {
 	rand.Seed(time.Now().Unix())
 
-	expressions := []string{
-		"泣いている",
-		"怒っている",
-		"笑っている",
-		"考えている",
-		"喜んでいる",
-		"からかっている",
-		"企んでいる",
-		"焦っている",
-		"照れている"}
-	expression := expressions[rand.Intn(len(expressions))]
+	expressions := odai.GetOdai("テーマ", "オプション")
+	expression := expressions.OdaiList[rand.Intn(len(expressions.OdaiList))]
 
-	hairStyles := []string{"長髪", "ポニーテール", "ツインテール", "短髪", "サイドテール", "ぼさぼさ"}
-	hairStyle := hairStyles[rand.Intn(len(hairStyles))]
+	hairStyles := odai.GetOdai("テーマ", "髪型")
+	hairStyle := hairStyles.OdaiList[rand.Intn(len(hairStyles.OdaiList))]
 
 	clothing_list := []string{"警察官の服", "メイド服／執事服", "ドレス／タキシード", "体操服", "巫女服／神主服", "水着", "学生服", "看護服／白衣", "私服", "道着"}
 	clothing := clothing_list[rand.Intn(len(clothing_list))]
