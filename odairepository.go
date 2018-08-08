@@ -7,16 +7,6 @@ import (
 	"os"
 )
 
-type OdaiCache struct {
-	Data []Odai
-}
-
-type Odai struct {
-	OdaiType    string
-	OdaiSubtype string
-	OdaiList    []string
-}
-
 func (cache *OdaiCache) GetOdai(OdaiType string, OdaiSubtype string) Odai {
 
 	length := len(cache.Data)
@@ -61,4 +51,44 @@ func ReadFile(OdaiType string, OdaiSubtype string) []string {
 		}
 	}
 	return result
+}
+
+func (cache *OdaiCache) AddOdai(OdaiType string, OdaiSubtype string, Odai string) {
+
+	length := len(cache.Data)
+
+	for c := 0; c < length; c++ {
+		if cache.Data[c].OdaiType == OdaiType && cache.Data[c].OdaiSubtype == OdaiSubtype {
+			for _, n := range cache.Data[c].OdaiList {
+				log.Print(n)
+				if Odai == n {
+					log.Print("Odai Exists")
+					return
+				}
+			}
+		}
+	}
+
+	WriteFile(OdaiType, OdaiSubtype, Odai)
+	log.Print("Write Odai")
+
+	for i := 0; i < length; i++ {
+		if cache.Data[i].OdaiType == OdaiType && cache.Data[i].OdaiSubtype == OdaiSubtype {
+			cache.Data[i].OdaiList = append(cache.Data[i].OdaiList, Odai)
+			break
+		}
+	}
+}
+
+func WriteFile(OdaiType string, OdaiSubtype string, Odai string) {
+	fp, err := os.OpenFile("odai.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+	defer fp.Close()
+
+	_, err2 := fp.WriteString(OdaiType + "," + OdaiSubtype + "," + Odai + "\n")
+	if err2 != nil {
+		panic(err2)
+	}
 }

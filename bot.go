@@ -4,15 +4,29 @@ import (
 	"github.com/nlopes/slack"
 	"log"
 	"math/rand"
+	"strings"
 	"time"
 )
 
 const (
 	requestMessage         = "お題くれ"
-	requestMessageClothing = "服のお題くれ"
+	requestClothingMessage = "服のお題くれ"
+	requestAddOdaiMessage  = "お題追加して"
 	keepAlive              = "生きてる？"
 	answerAlive            = "はい！！！元気です！！！"
+	answerAddOdai          = "追加しました"
+	answerAddOdaiHelp      = "お題追加して [大項目] [小項目] [お題] と書いてください"
 )
+
+type OdaiCache struct {
+	Data []Odai
+}
+
+type Odai struct {
+	OdaiType    string
+	OdaiSubtype string
+	OdaiList    []string
+}
 
 func Run(apikey string) int {
 	api := slack.New(apikey)
@@ -30,14 +44,22 @@ func Run(apikey string) int {
 
 			case *slack.MessageEvent:
 				log.Printf("Message: %v\n", ev)
-				if ev.Text == requestMessage {
+				messageList := strings.Fields(ev.Text)
+				if messageList[0] == requestMessage {
 					theme := ChoiceTheme(odai)
 					rtm.SendMessage(rtm.NewOutgoingMessage(theme, ev.Channel))
-				} else if ev.Text == requestMessageClothing {
+				} else if messageList[0] == requestClothingMessage {
 					theme := ChoiceClothing(odai)
 					rtm.SendMessage(rtm.NewOutgoingMessage(theme, ev.Channel))
-				} else if ev.Text == keepAlive {
+				} else if messageList[0] == keepAlive {
 					rtm.SendMessage(rtm.NewOutgoingMessage(answerAlive, ev.Channel))
+				} else if messageList[0] == requestAddOdaiMessage {
+					if len(messageList) == 4 {
+						odai.AddOdai(messageList[1], messageList[2], messageList[3])
+						rtm.SendMessage(rtm.NewOutgoingMessage(answerAddOdai, ev.Channel))
+					} else {
+						rtm.SendMessage(rtm.NewOutgoingMessage(answerAddOdaiHelp, ev.Channel))
+					}
 				}
 
 			case *slack.InvalidAuthEvent:
@@ -62,7 +84,7 @@ func ChoiceClothing(odai OdaiCache) string {
 	shoebox := odai.GetOdai("服", "靴")
 	shoes := shoebox.OdaiList[rand.Intn(len(shoebox.OdaiList))]
 
-	option := ChoiceOption()
+	option := ChoiceOption(odai)
 
 	theme := clothing_top1 + "か" + clothing_top2 + "か、もしくは両方を合わせた服に" + clothing_bottom + "を描きましょう。履物は" + shoes + "で、" + option + "もおまけでいかがでしょうか。"
 
@@ -91,7 +113,7 @@ func ChoiceTheme(odai OdaiCache) string {
 	sex_list := []string{"男", "女"}
 	sex := sex_list[rand.Intn(len(sex_list))]
 
-	option := ChoiceOption()
+	option := ChoiceOption(odai)
 
 	theme := expression + hairStyle + "の" + clothing + "を着た" + sex + "を描きましょう。おまけで" + option + "もいれてみては。"
 
