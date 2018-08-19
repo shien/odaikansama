@@ -53,29 +53,43 @@ func ReadFile(OdaiType string, OdaiSubtype string) []string {
 	return result
 }
 
-func (cache *OdaiCache) AddOdai(OdaiType string, OdaiSubtype string, Odai string) {
+func (cache *OdaiCache) IsOdaiExist(OdaiType string, OdaiSubtype string, Odai string) bool {
 
 	length := len(cache.Data)
 
 	for c := 0; c < length; c++ {
 		if cache.Data[c].OdaiType == OdaiType && cache.Data[c].OdaiSubtype == OdaiSubtype {
 			for _, n := range cache.Data[c].OdaiList {
-				log.Print(n)
 				if Odai == n {
-					log.Print("Odai Exists")
-					return
+					return true
 				}
 			}
 		}
 	}
+	return false
+}
 
-	WriteFile(OdaiType, OdaiSubtype, Odai)
-	log.Print("Write Odai")
+func (cache *OdaiCache) AddOdai(OdaiType string, OdaiSubtype string, newOdai string) {
 
-	for i := 0; i < length; i++ {
-		if cache.Data[i].OdaiType == OdaiType && cache.Data[i].OdaiSubtype == OdaiSubtype {
-			cache.Data[i].OdaiList = append(cache.Data[i].OdaiList, Odai)
-			break
+	if !cache.IsOdaiExist(OdaiType, OdaiSubtype, newOdai) {
+		WriteFile(OdaiType, OdaiSubtype, newOdai)
+
+		length := len(cache.Data)
+		odaiTypeExist := false
+		for i := 0; i < length; i++ {
+			if cache.Data[i].OdaiType == OdaiType && cache.Data[i].OdaiSubtype == OdaiSubtype {
+				cache.Data[i].OdaiList = append(cache.Data[i].OdaiList, newOdai)
+				odaiTypeExist = true
+				break
+			}
+		}
+
+		if !odaiTypeExist {
+			var odai Odai
+			odai.OdaiType = OdaiType
+			odai.OdaiSubtype = OdaiSubtype
+			odai.OdaiList = append(odai.OdaiList, newOdai)
+			cache.Data = append(cache.Data, odai)
 		}
 	}
 }
