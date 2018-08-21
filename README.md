@@ -17,6 +17,12 @@ Run slack bot.
 ./odaikansama --apikey [apikey]
 ```
 
+## How to test source
+
+```
+go test
+```
+
 ## TODO
 
 - 人間以外も指定できるようにする
